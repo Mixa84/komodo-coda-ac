@@ -1,0 +1,14 @@
+(library
+  (name lite_compat)
+  (public_name lite_compat)
+  (libraries
+      core
+      crypto_params
+      snarky
+      snarkette
+      coda_base
+      lite_base
+      genesis_ledger
+    )
+   (preprocess (pps ppx_jane ppxlib.runner))
+   (modes native))
