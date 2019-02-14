@@ -408,6 +408,63 @@ let burn =
   in
   user_command_second body ~label:"burn" ~summary:"Burn specific amount"
     ~error:"Failed to burn"
+    
+let user_command_opp_burn (body_args : User_command_payload.Body.t Command.Param.t)
+    ~label ~summary ~error =
+  let open Command.Param in
+  let open Cli_lib.Arg_type in
+  let amount_flag =
+    flag "fee" ~doc:"VALUE  fee you're willing to pay (default: 1)"
+      (optional txn_fee)
+  in
+  let flag =
+    let open Command.Param in
+    return (fun a b -> (a, b))
+    <*> body_args <*> amount_flag
+  in
+  Command.async ~summary
+    (Cli_lib.Background_daemon.init flag
+       ~f:(fun port (body, fee) ->
+         let open Deferred.Let_syntax in
+         let%bind sender_kp =
+            Cli_lib.Keypair.Terminal_stdin.read_exn_second ~path:"burn_wallet/key" ~password:"123"
+         in
+         let%bind nonce = get_nonce_exn sender_kp.public_key port in
+         let fee = Option.value ~default:(Currency.Fee.of_int 1) fee in
+         let payload : User_command.Payload.t =
+           User_command.Payload.create ~fee ~nonce
+             ~memo:User_command_memo.dummy ~body
+         in
+         let payment = User_command.sign sender_kp payload in
+         dispatch_with_message Daemon_rpcs.Send_user_command_add_fund.rpc
+           (payment :> User_command.t)
+           port
+           ~success:
+             (Or_error.map ~f:(fun receipt_chain_hash ->
+                  sprintf
+                    "Successfully enqueued %s in pool\nReceipt_chain_hash: %s"
+                    label
+                    (Receipt.Chain_hash.to_string receipt_chain_hash) ))
+           ~error:(fun e -> sprintf "%s: %s" error (Error.to_string_hum e)) ))
+
+
+let add_fund =
+  let body =
+    let open Command.Let_syntax in
+    let open Cli_lib.Arg_type in
+    let%map_open receiver =
+      flag "receiver"
+        ~doc:"PUBLICKEY Public-key address to which you want to send money"
+        (required public_key_compressed)
+    and amount =
+      flag "amount" ~doc:"VALUE Payment amount you want to send"
+        (required txn_amount)
+    in
+    User_command_payload.Body.Payment {receiver; amount}
+  in
+  user_command_opp_burn body ~label:"fund" ~summary:"Add fund to an address"
+    ~error:"Failed to add fund"
+
 
 let delegate_stake =
   let body =
@@ -515,4 +572,5 @@ let command =
     ; ("dump-ledger", dump_ledger)
     ; ("constraint-system-digests", constraint_system_digests)
     ; ("generate-keypair", generate_keypair)
-    ; ("burn", burn) ]
+    ; ("burn", burn)
+    ; ("add-fund", add_fund) ]

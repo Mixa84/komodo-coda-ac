@@ -144,6 +144,7 @@ module Send_user_command = struct
       ~bin_response
 end
 
+
 module Send_user_commands = struct
   type query = User_command.Stable.V1.t list [@@deriving bin_io]
 
@@ -269,4 +270,16 @@ module Stop_daemon = struct
 
   let rpc : (query, response) Rpc.Rpc.t =
     Rpc.Rpc.create ~name:"Stop_daemon" ~version:0 ~bin_query ~bin_response
+end
+
+module Send_user_command_add_fund = struct
+  type query = User_command.Stable.V1.t [@@deriving bin_io]
+
+  type response = Receipt.Chain_hash.t Or_error.t [@@deriving bin_io]
+
+  type error = unit [@@deriving bin_io]
+
+  let rpc : (query, response) Rpc.Rpc.t =
+    Rpc.Rpc.create ~name:"Send_user_command_add_fund" ~version:0 ~bin_query
+      ~bin_response
 end

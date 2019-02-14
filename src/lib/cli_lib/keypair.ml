@@ -65,6 +65,7 @@ module Terminal_stdin = struct
     read_exn ~privkey_path:path 
       ~password:(lazy (Password.read_no_prompt password))
   let read_exn path =
+    printf !"asdfasdfasdf";
     read_exn ~privkey_path:path
       ~password:(lazy (Password.read "Secret key password: "))
 

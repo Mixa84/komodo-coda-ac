@@ -1033,6 +1033,17 @@ module Run (Config_in : Config_intf) (Program : Main_intf) = struct
     | false -> Logger.info log "This is not a burn address"; record_payment ~log t txn (Option.value_exn account_opt)    
     | a -> Logger.info log "This is a burn address"; Receipt.Chain_hash.of_string "Error"
 
+  let add_fund log t (txn : User_command.t) =
+    Deferred.return
+    @@
+    let open Or_error.Let_syntax in
+    let public_key = Public_key.compress txn.sender in
+    Logger.info log !"---------------------------------------add_fund function in codamain txn %s---------------------------------------------------" (Public_key.Compressed.to_base64 public_key);
+    
+    let account_opt = get_account t public_key in
+    let%map () = schedule_payment log t txn account_opt in
+    record_payment ~log t txn (Option.value_exn account_opt)    
+    
   (* TODO: Properly record receipt_chain_hash for multiple transactions. See #1143 *)
   let schedule_payments log t txns =
     List.iter txns ~f:(fun (txn : User_command.t) ->
@@ -1157,6 +1168,8 @@ module Run (Config_in : Config_intf) (Program : Main_intf) = struct
     let client_impls =
       [ Rpc.Rpc.implement Daemon_rpcs.Send_user_command.rpc (fun () tx ->
             send_payment log coda tx )
+      ; Rpc.Rpc.implement Daemon_rpcs.Send_user_command_add_fund.rpc (fun () tx ->
+            add_fund log coda tx )
       ; Rpc.Rpc.implement Daemon_rpcs.Send_user_commands.rpc (fun () ts ->
             schedule_payments log coda ts ;
             Deferred.unit )
