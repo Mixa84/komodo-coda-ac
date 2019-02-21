@@ -11,8 +11,7 @@ daemon_script
 docs
 funded_wallet
 *.txt
-ocaml-dune
-ocaml-rocksdb
-ocaml-sodium
+ocaml-dune1
+ocaml-rocksdb1
+ocaml-sodium1
 wallet
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																										
