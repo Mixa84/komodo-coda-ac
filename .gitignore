@@ -10,7 +10,11 @@ burn_wallet
 daemon_script
 docs
 funded_wallet
-*.txt
+log-8300.txt
+log-8400.txt
+log-8500.txt
+log-9300.txt
+faasdfasdf.txt
 ocaml-dune1
 ocaml-rocksdb1
 ocaml-sodium1
