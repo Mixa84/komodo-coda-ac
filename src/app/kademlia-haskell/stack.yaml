@@ -1,0 +1,11 @@
+resolver: lts-13.7
+packages:
+- '.'
+nix:
+  enable: false
+  packages: [gmp]
+extra-deps:
+- git: https://github.com/CodaProtocol/kademlia.git
+  commit: cfd2a5da7294bd305eb56a385e0a2e7287da45dd
+flags: {}
+extra-package-dbs: []
