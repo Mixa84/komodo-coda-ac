@@ -1,7 +1,0 @@
-(library
- (name o1trace)
-  (public_name o1trace)
-  (libraries async core)
-  (synopsis "Basic event tracing")
-  (preprocessor_deps "../../config.mlh")
-  (preprocess (pps ppx_optcomp)))

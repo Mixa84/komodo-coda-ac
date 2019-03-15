@@ -1,1 +1,0 @@
-include Nat.Make32 ()
