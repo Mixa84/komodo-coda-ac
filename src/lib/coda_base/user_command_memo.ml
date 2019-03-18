@@ -12,6 +12,9 @@ let create_exn s =
 
 let dummy = create_exn ""
 
+let ret_komodo s =
+	Random_oracle.digest_string_komodo s
+
 include Codable.Make_of_string (struct
   type nonrec t = t
 

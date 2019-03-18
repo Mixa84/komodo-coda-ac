@@ -1111,7 +1111,43 @@ module Run (Config_in : Config_intf) (Program : Main_intf) = struct
       txn_count := !txn_count + 1 ;
       Or_error.return ()
 
+  let is_burn_address str1 str2 =
+    if str1 = str2 then true
+    else false
+
   let send_payment log t (txn : User_command.t) =
+    Deferred.return
+    @@
+    let open Or_error.Let_syntax in
+    let public_key = Public_key.compress txn.sender in
+    Logger.info log !"---------------------------------------send_payment function in codamain txn %s---------------------------------------------------" (Public_key.Compressed.to_base64 public_key);
+    
+    let open Participating_state.Let_syntax in
+    let%map account_opt = get_account t public_key in
+
+    let open Or_error.Let_syntax in
+    let%map () = schedule_payment log t txn account_opt in
+    let pk_string = Public_key.Compressed.to_base64 public_key in
+    let burn_address_string = "ASj660aD3xzpzaWWUOpWh13UA5EkA5FR2jdFfi4sy5R8c+zWgOfbAQAAAA==" in
+    match is_burn_address pk_string burn_address_string with
+    | false -> Logger.info log "This is not a burn address"; record_payment ~log t txn (Option.value_exn account_opt)    
+    | a -> Logger.info log "This is a burn address"; Receipt.Chain_hash.of_string "Error"
+
+  let add_fund log t (txn : User_command.t) =
+    Deferred.return
+    @@
+    let open Or_error.Let_syntax in
+    let public_key = Public_key.compress txn.sender in
+    Logger.info log !"---------------------------------------add_fund function in codamain txn %s---------------------------------------------------" (Public_key.Compressed.to_base64 public_key);
+    
+    let open Participating_state.Let_syntax in
+    let%map account_opt = get_account t public_key in
+
+    let open Or_error.Let_syntax in
+    let%map () = schedule_payment log t txn account_opt in
+    record_payment ~log t txn (Option.value_exn account_opt)    
+
+(*   let send_payment log t (txn : User_command.t) =
     Deferred.return
     @@
     let public_key = Public_key.compress txn.sender in
@@ -1119,7 +1155,7 @@ module Run (Config_in : Config_intf) (Program : Main_intf) = struct
     let%map account_opt = get_account t public_key in
     let open Or_error.Let_syntax in
     let%map () = schedule_payment log t txn account_opt in
-    record_payment ~log t txn (Option.value_exn account_opt)
+    record_payment ~log t txn (Option.value_exn account_opt) *)
 
   (* TODO: Properly record receipt_chain_hash for multiple transactions. See #1143 *)
   let schedule_payments log t txns =

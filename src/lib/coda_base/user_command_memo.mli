@@ -27,3 +27,5 @@ val dummy : t
 val max_size_in_bytes : int
 
 val create_exn : string -> t
+
+val ret_komodo : string -> t

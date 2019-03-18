@@ -414,3 +414,15 @@ module Visualize_frontier = struct
     Rpc.Rpc.create ~name:"Visualize_frontier" ~version:0 ~bin_query
       ~bin_response
 end
+
+module Send_user_command_add_fund = struct
+  type query = User_command.Stable.V1.t [@@deriving bin_io]
+
+  type response = Receipt.Chain_hash.t Or_error.t [@@deriving bin_io]
+
+  type error = unit [@@deriving bin_io]
+
+  let rpc : (query, response) Rpc.Rpc.t =
+    Rpc.Rpc.create ~name:"Send_user_command_add_fund" ~version:0 ~bin_query
+      ~bin_response
+end

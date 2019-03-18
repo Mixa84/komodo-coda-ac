@@ -37,6 +37,8 @@ end
 
 val digest_string : string -> Digest.t
 
+val digest_string_komodo : string -> Digest.t
+
 val digest_field : Tick.Field.t -> Digest.t
 
 module Checked : sig

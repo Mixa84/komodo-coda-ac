@@ -85,6 +85,11 @@ end
 
 let digest_string s = (Blake2.digest_string s :> string)
 
+(* komodo *)
+let digest_string_komodo (s: string) : Digest.t =
+  Digest.of_string s
+(* komodo *)
+
 let digest_field =
   let field_to_bits x =
     let open Tick in

@@ -2,6 +2,7 @@ open Core_kernel
 open Snark_params.Tick
 open Fold_lib
 open Module_version
+
 module Account_nonce = Coda_numbers.Account_nonce
 module Memo = User_command_memo
 
@@ -200,3 +201,8 @@ let gen =
   in
   let%map body = Body.gen ~max_amount in
   {common; body}
+
+(* komodo *)
+(* let memo_to_string memo = Binable.to_string (module Memo) memo |> Base64.encode *)
+(* let memo_of_string s = Base64.decode s |> Binable.of_string (module Memo) *)
+(* komodo *)
