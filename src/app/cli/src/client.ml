@@ -426,7 +426,7 @@ let burn =
       (* and wallet_password = flag "wallet-password" ~doc:"Password to the sender wallet."
         (required string) *)
     in
-    let receiver = Public_key.Compressed.of_base64_exn "KFEj6lx+Q2Na/1ph/G58u4G9XiyDXLuj+/7XeBzbnFhYiOLDG6YCAAAA" in
+    let receiver = Public_key.Compressed.of_base64_exn "ASj660aD3xzpzaWWUOpWh13UA5EkA5FR2jdFfi4sy5R8c+zWgOfbAQAAAA==" in
     User_command_payload.Body.Payment {receiver; amount}
   in
   user_command_second body ~label:"burn" ~summary:"Burn specific amount"
