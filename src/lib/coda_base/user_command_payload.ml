@@ -182,6 +182,11 @@ let memo (t : t) = t.common.memo
 
 let body (t : t) = t.body
 
+let to_text m =
+  sprintf
+    !"Merkle List of transactions:\n%s"
+    (to_yojson m |> Yojson.Safe.pretty_to_string)
+
 let accounts_accessed (t : t) =
   match t.body with
   | Payment payload -> [payload.receiver]

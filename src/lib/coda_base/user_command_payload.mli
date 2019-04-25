@@ -95,6 +95,8 @@ val accounts_accessed : t -> Public_key.Compressed.t list
 
 val gen : t Quickcheck.Generator.t
 
+val to_text : t -> string
+
 (* komodo *)
 (* val memo_to_string : User_command_memo.t -> string *)
 (* val memo_of_string : string -> User_command_memo.t *)

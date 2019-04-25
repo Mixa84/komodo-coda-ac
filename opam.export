@@ -168,4 +168,5 @@ installed: [
   "yojson.1.5.0"
   "zarith.1.7"
   "zed.1.6"
+  "curly.0.1.0"
 ]

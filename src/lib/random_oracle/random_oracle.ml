@@ -1,5 +1,7 @@
-open Core_kernel
+(* open Core_kernel *)
 open Snark_params
+open Core
+open Async
 
 let digest_size_in_bits = 256
 
@@ -83,11 +85,14 @@ module Digest = struct
         of_string (Snarky_blake2.bits_to_string bs) )
 end
 
-let digest_string s = (Blake2.digest_string s :> string)
+let digest_string s = 
+  (* let str =  (Blake2.digest_string s :> string) in
+  printf !"digest_string: %s" (Base64.encode_string str); *)
+  (Blake2.digest_string s :> string)
 
 (* komodo *)
 let digest_string_komodo (s: string) : Digest.t =
-  Digest.of_string s
+  Binable.of_string (module Digest) s
 (* komodo *)
 
 let digest_field =

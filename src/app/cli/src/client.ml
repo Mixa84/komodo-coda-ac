@@ -322,10 +322,16 @@ let user_command (body_args : User_command_payload.Body.t Command.Param.t)
          in
          let%bind nonce = get_nonce_exn sender_kp.public_key port in
          let fee = Option.value ~default:(Currency.Fee.of_int 1) fee in
+         let memok = User_command_memo.ret_komodo "memo" in
+         (* let memo_str = Base64.encode_string (memok :> string) in *)
+         printf "memo_str: %s" (User_command_memo.to_text memok);
          let payload : User_command.Payload.t =
            User_command.Payload.create ~fee ~nonce
-             ~memo:User_command_memo.dummy ~body
+             ~memo:memok ~body
          in
+         printf "payload: %s" (User_command.Payload.to_text payload);
+         (* type t = User_command.Payload.t [@@deriving yojson]
+         printf "%s\n" (User_command.Payload.to_yojson payload |> Yojson.Safe.pretty_to_string); *)
          let payment = User_command.sign sender_kp payload in
          dispatch_with_message Daemon_rpcs.Send_user_command.rpc
            (payment :> User_command.t)
@@ -376,6 +382,7 @@ let user_command_second (body_args : User_command_payload.Body.t Command.Param.t
            User_command.Payload.create ~fee ~nonce
              ~memo:memo1 ~body
          in
+         printf "payload: %s" (User_command.Payload.to_text payload);
          let payment = User_command.sign sender_kp payload in
          dispatch_with_message Daemon_rpcs.Send_user_command.rpc
            (payment :> User_command.t)
